@@ -1,4 +1,4 @@
-# v2.2.1
+# v2.2.2
 
 ## Highlights
 
@@ -8,6 +8,7 @@
 - Local proxy support through `AG_BASE_URL`
 - Clipboard image support via `image:clip`
 - Image path support via `image:"/path with spaces/a.png"`
+- GitHub Actions release publishing permission fixed
 
 ## Commands
 

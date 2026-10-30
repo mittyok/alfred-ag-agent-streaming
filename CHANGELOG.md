@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.2.2
+
+- Fix GitHub Actions release publishing permissions.
+- Keep public workflow defaults safe for OpenAI-compatible APIs.
+
 ## v2.2.1
 
 - Add clipboard image support via `image:clip`, `image:clipboard`, and `image:pasteboard`.
