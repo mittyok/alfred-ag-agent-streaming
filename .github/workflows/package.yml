@@ -1,0 +1,31 @@
+name: Package Alfred Workflow
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  package:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate plist
+        run: plutil -lint workflow/info.plist
+      - name: Validate Python
+        run: python3 -m py_compile workflow/*.py
+      - name: Package workflow
+        run: |
+          cd workflow
+          zip -r ../AG-Agent-Chat-Streaming.alfredworkflow .
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AG-Agent-Chat-Streaming
+          path: AG-Agent-Chat-Streaming.alfredworkflow
+      - name: Publish release asset
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: AG-Agent-Chat-Streaming.alfredworkflow
