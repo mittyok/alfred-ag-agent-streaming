@@ -243,7 +243,7 @@ def build_user_message(prompt):
     return {"role": "user", "content": content}, history_text, image_paths
 
 
-def start_worker(prompt, mode, session, paths):
+def start_worker(prompt, mode, session, paths, request_id):
     if mode == "continue":
         paths["stop"].write_text("1", encoding="utf-8")
         time.sleep(0.15)
@@ -253,10 +253,7 @@ def start_worker(prompt, mode, session, paths):
         except FileNotFoundError:
             pass
     paths["txt"].write_text("", encoding="utf-8")
-    active_request = os.environ.get("ag_request", "")
-    if prompt and mode == "continue":
-        active_request = "inline-" + hashlib.sha256(f"{session}:{prompt}".encode("utf-8")).hexdigest()[:16]
-    paths["request"].write_text(active_request, encoding="utf-8")
+    paths["request"].write_text(request_id or "", encoding="utf-8")
     env = os.environ.copy()
     env.update({
         "AG_STREAM_WORKER": "1",
@@ -397,7 +394,7 @@ def main_view():
     else:
         should_start = not paths["request"].exists() and not paths["txt"].exists() and not paths["done"].exists()
     if should_start:
-        start_worker(prompt, mode, session, paths)
+        start_worker(prompt, mode, session, paths, request_id)
         label = "继续会话，正在中断上一轮并追加引导…" if mode == "continue" else "Agent 正在启动…"
         textview(f"⏳ {label}", "启动中… 可按 Esc 关闭", rerun=0.2)
         return

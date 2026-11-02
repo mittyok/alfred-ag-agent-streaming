@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.2.3
+
+- Fix `agc` external follow-up getting stuck in the startup state.
+- Align stored request IDs with Alfred rerun request IDs to avoid repeated restarts.
+
 ## v2.2.2
 
 - Fix GitHub Actions release publishing permissions.

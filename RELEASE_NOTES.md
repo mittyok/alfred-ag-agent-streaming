@@ -1,23 +1,10 @@
-# v2.2.2
+# v2.2.3
 
-## Highlights
+## Fixes
 
-- Streaming agent responses in Alfred Text View
-- Continue, stop, and clear conversation commands
-- OpenAI-compatible `/chat/completions` support
-- Local proxy support through `AG_BASE_URL`
-- Clipboard image support via `image:clip`
-- Image path support via `image:"/path with spaces/a.png"`
-- GitHub Actions release publishing permission fixed
+- Fix `agc <follow-up>` getting stuck at “continuing conversation…” after pressing Enter.
+- The bug was caused by a request-id mismatch: external `agc` supplied `ag_request`, but the worker stored a different inline-style request id, so every Text View rerun restarted the same follow-up.
 
-## Commands
+## Download
 
-- `ag <question>` starts a new chat
-- `agc <follow-up>` continues the current chat
-- `ags` stops generation
-- `agclear` clears the current session
-- `agkey <key>` saves an API key to macOS Keychain
-
-## Notes
-
-If your local proxy returns HTTP 400, check whether it supports the request payload and vision content. The workflow intentionally sends a minimal request body for better compatibility.
+Use `AG-Agent-Chat-Streaming.alfredworkflow` from this release.
