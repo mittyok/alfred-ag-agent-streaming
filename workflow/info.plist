@@ -501,6 +501,8 @@ Commands:
 Images:
 - `image:clip` reads a clipboard image
 - `image:"/path/with spaces/a.png"` sends an image file
+
+Streaming scroll: set AG_STREAM_SCROLL=end to force following the bottom; default preserve avoids forcing bottom scroll during streaming.
 </string>
 	<key>uidata</key>
 	<dict/>
@@ -514,9 +516,11 @@ Images:
 		<string>你是一个高效、准确的桌面助手。优先用中文简洁回答；必要时给出步骤、命令或代码。</string>
 		<key>OPENAI_API_KEY</key>
 		<string></string>
+		<key>AG_STREAM_SCROLL</key>
+		<string>preserve</string>
 	</dict>
 	<key>version</key>
-	<string>2.2.4</string>
+	<string>2.2.5</string>
 	<key>webaddress</key>
 	<string>https://github.com/mittyok/alfred-ag-agent-streaming</string>
 </dict>

@@ -356,6 +356,15 @@ def spinner():
     return frames[int(time.time() * 4) % len(frames)]
 
 
+def streaming_scroll_mode():
+    value = os.environ.get("AG_STREAM_SCROLL", "preserve").strip().lower()
+    if value in {"end", "bottom", "follow", "true", "1", "yes"}:
+        return "end"
+    if value in {"start", "top"}:
+        return "start"
+    return "auto"
+
+
 def script_input_prompt():
     import select
     import sys
@@ -436,12 +445,12 @@ def main_view():
             if shown_len and shown_len <= len(response):
                 delta = response[shown_len:]
                 paths["shown"].write_text(str(len(response)), encoding="utf-8")
-                textview(delta, "生成中… 可用 agc 追加引导，ags 停止", rerun=0.25, response_mode="append", scroll="end")
+                textview(delta, "生成中… 可用 agc 追加引导，ags 停止", rerun=0.25, response_mode="append", scroll=streaming_scroll_mode())
             else:
                 paths["shown"].write_text(str(len(response)), encoding="utf-8")
-                textview(response, "生成中… 可用 agc 追加引导，ags 停止", rerun=0.25, response_mode="replace", scroll="end")
+                textview(response, "生成中… 可用 agc 追加引导，ags 停止", rerun=0.25, response_mode="replace", scroll=streaming_scroll_mode())
         else:
-            textview(f"{spinner()} 正在连接 Agent…", "生成中… 可用 agc 追加引导，ags 停止", rerun=0.25, response_mode="replace", scroll="end")
+            textview(f"{spinner()} 正在连接 Agent…", "生成中… 可用 agc 追加引导，ags 停止", rerun=0.25, response_mode="replace", scroll=streaming_scroll_mode())
 
 
 if __name__ == "__main__":

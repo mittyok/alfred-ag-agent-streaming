@@ -1,9 +1,10 @@
-# v2.2.4
+# v2.2.5
 
 ## Fixes
 
-- Improve scroll stability during streaming output.
-- Text View no longer replaces the entire response on every rerun once content is visible.
-- Streaming updates now append only the newly generated delta and keep `scroll: end`.
+- Streaming output no longer forces `scroll: end` on every update by default.
+- Added `AG_STREAM_SCROLL` workflow variable.
+  - Default: `preserve`
+  - Set to `end` to force always-follow-bottom behavior.
 
-This prevents the view/scrollbar from jumping back toward the top while long answers are still streaming.
+This makes long streaming answers less disruptive when you are reading earlier content.

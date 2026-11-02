@@ -31,6 +31,7 @@ Default variables:
 | `AG_MODEL` | `gpt-4o-mini` | Model name sent to the API |
 | `AG_SYSTEM_PROMPT` | Chinese concise assistant prompt | System prompt |
 | `OPENAI_API_KEY` | empty | Optional for local `127.0.0.1` / `localhost` proxies |
+| `AG_STREAM_SCROLL` | `preserve` | Set to `end` to force auto-scroll to bottom during streaming |
 
 ## Commands
 

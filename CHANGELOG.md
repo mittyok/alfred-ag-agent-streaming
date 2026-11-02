@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.2.5
+
+- Stop forcing Text View to scroll to the bottom on every streaming update by default.
+- Add `AG_STREAM_SCROLL`; set it to `end` if you prefer always-follow-bottom behavior.
+
 ## v2.2.4
 
 - Improve streaming Text View scroll stability.
