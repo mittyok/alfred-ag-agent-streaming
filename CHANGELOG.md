@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.2.4
+
+- Improve streaming Text View scroll stability.
+- Switch streaming updates from full `replace` refreshes to incremental `append` updates after the first visible content.
+- Keep scroll anchored to the bottom during generation.
+
 ## v2.2.3
 
 - Fix `agc` external follow-up getting stuck in the startup state.

@@ -46,6 +46,7 @@ def paths_for(session):
         "stop": base.with_suffix(".stop"),
         "history": base.with_suffix(".jsonl"),
         "request": base.with_suffix(".request"),
+        "shown": base.with_suffix(".shown"),
     }
 
 
@@ -67,8 +68,12 @@ def read_keychain_key():
     return result.stdout.strip() if result.returncode == 0 else ""
 
 
-def textview(response, footer, rerun=None):
-    payload = {"response": response, "footer": footer, "behaviour": {"response": "replace", "scroll": "end", "inputfield": "clear"}}
+def textview(response, footer, rerun=None, response_mode="replace", scroll="end"):
+    payload = {
+        "response": response,
+        "footer": footer,
+        "behaviour": {"response": response_mode, "scroll": scroll, "inputfield": "clear"},
+    }
     if rerun is not None:
         payload["rerun"] = rerun
     print(json.dumps(payload, ensure_ascii=False))
@@ -247,7 +252,7 @@ def start_worker(prompt, mode, session, paths, request_id):
     if mode == "continue":
         paths["stop"].write_text("1", encoding="utf-8")
         time.sleep(0.15)
-    for key in ("txt", "done", "stop"):
+    for key in ("txt", "done", "stop", "shown"):
         try:
             paths[key].unlink()
         except FileNotFoundError:
@@ -399,20 +404,44 @@ def main_view():
         textview(f"⏳ {label}", "启动中… 可按 Esc 关闭", rerun=0.2)
         return
     response = paths["txt"].read_text(encoding="utf-8") if paths["txt"].exists() else ""
+    shown_len = 0
+    if paths["shown"].exists():
+        try:
+            shown_len = int(paths["shown"].read_text(encoding="utf-8") or "0")
+        except ValueError:
+            shown_len = 0
+
     if paths["done"].exists():
-        if "⏹ 已停止" in response:
+        if shown_len and response.startswith(response[:shown_len]):
+            delta = response[shown_len:]
+            if delta:
+                paths["shown"].write_text(str(len(response)), encoding="utf-8")
+                textview(delta, "✅ 完成。可用 agc 继续；↵ 复制全文；Esc 关闭", response_mode="append", scroll="end")
+            elif "⏹ 已停止" in response:
+                textview("", "已停止。可用 agc 继续；agclear 清空；Esc 关闭", response_mode="append", scroll="end")
+            else:
+                textview("", "✅ 完成。可用 agc 继续；↵ 复制全文；Esc 关闭", response_mode="append", scroll="end")
+        elif "⏹ 已停止" in response:
+            paths["shown"].write_text(str(len(response)), encoding="utf-8")
             textview(response, "已停止。可用 agc 继续；agclear 清空；Esc 关闭")
         elif response.startswith("❌") or response.startswith("⚠️"):
+            paths["shown"].write_text(str(len(response)), encoding="utf-8")
             textview(response, "出错。检查 AG_BASE_URL / AG_MODEL / Key；可用 agc 重试")
         else:
-            textview(response or "⚠️ Agent 没有返回内容。", "✅ 完成。可用 agc 继续；↵ 复制全文；Esc 关闭")
+            final = response or "⚠️ Agent 没有返回内容。"
+            paths["shown"].write_text(str(len(final)), encoding="utf-8")
+            textview(final, "✅ 完成。可用 agc 继续；↵ 复制全文；Esc 关闭")
     else:
-        mark = spinner()
         if response:
-            shown = f"{response}\n\n{mark} 生成中…"
+            if shown_len and shown_len <= len(response):
+                delta = response[shown_len:]
+                paths["shown"].write_text(str(len(response)), encoding="utf-8")
+                textview(delta, "生成中… 可用 agc 追加引导，ags 停止", rerun=0.25, response_mode="append", scroll="end")
+            else:
+                paths["shown"].write_text(str(len(response)), encoding="utf-8")
+                textview(response, "生成中… 可用 agc 追加引导，ags 停止", rerun=0.25, response_mode="replace", scroll="end")
         else:
-            shown = f"{mark} 正在连接 Agent…"
-        textview(shown, "生成中… 可用 agc 追加引导，ags 停止", rerun=0.25)
+            textview(f"{spinner()} 正在连接 Agent…", "生成中… 可用 agc 追加引导，ags 停止", rerun=0.25, response_mode="replace", scroll="end")
 
 
 if __name__ == "__main__":
